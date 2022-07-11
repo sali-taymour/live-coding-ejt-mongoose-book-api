@@ -87,5 +87,11 @@ bookSchema.post('save', function (doc, next) {
 	console.log(`${timestamp}: updated book "${doc.title}`);
 	next();
 });
+bookSchema.methods.enhanceTitle = function () {
+	if (this.numberOfPages >= 200) {
+		this.title = this.title + ' (long book)';
+	}
+};
 
 export const Book = mongoose.model('book', bookSchema);
+ 
