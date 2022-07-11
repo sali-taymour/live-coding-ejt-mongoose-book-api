@@ -100,6 +100,12 @@ bookSchema.statics.findShortEnglishBooks = function () {
 		.where('numberOfPages')
 		.lte(200);
 };
+bookSchema.statics.findShortBooksByLanguage = function (language) {
+	return this.where('language')
+		.equals(language)
+		.where('numberOfPages')
+		.lte(200);
+};
 
 export const Book = mongoose.model('book', bookSchema);
  

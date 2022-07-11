@@ -140,6 +140,14 @@ app.get('/short-english-books', async (req, res) => {
 		books,
 	});
 });
+app.get('/short-books-by-language/:language', async (req, res) => {
+	const language = req.params.language;
+	const books = await Book.findShortBooksByLanguage(language);
+	res.status(200).json({
+		message: `fetched all short books in ${language}`,
+		books,
+	});
+});
 
 app.listen(port, () => {
 	console.log(`listening on port: http://localhost:${port}`);
