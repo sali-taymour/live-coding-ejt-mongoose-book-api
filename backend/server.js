@@ -36,6 +36,7 @@ app.post('/book', async (req, res) => {
 
 app.get('/book', async (req, res) => {
 	const books = await Book.find().sort({ title: 1 });
+    books.forEach(book => book.enhanceTitle());
 	res.status(200).json({
 		message: 'fetched all books',
 		books,
@@ -86,7 +87,8 @@ app.get('/long-books-by-language/:language', async (req, res) => {
 
 app.get('/book/:id', async (req, res) => {
 	const id = req.params.id;
-	const book = await Book.find({ _id: id });
+	const book = await Book.findOne({ _id: id });
+    book.enhanceTitle();
 	res.status(200).json({
 		message: 'fetched book with id ' + id,
 		book,
@@ -95,7 +97,7 @@ app.get('/book/:id', async (req, res) => {
 
 app.put('/book/:id', async (req, res) => {
 	const id = req.params.id;
-	const oldBook = await Book.find({ _id: id });
+	const oldBook = await Book.findOne({ _id: id });
 	await Book.updateOne({ _id: id }, { $set: { ...req.body } });
 	const newBook = await Book.find({ _id: id });
 	res.status(200).json({
