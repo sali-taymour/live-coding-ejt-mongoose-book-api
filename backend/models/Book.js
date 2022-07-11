@@ -87,10 +87,18 @@ bookSchema.post('save', function (doc, next) {
 	console.log(`${timestamp}: updated book "${doc.title}`);
 	next();
 });
+//methods
 bookSchema.methods.enhanceTitle = function () {
 	if (this.numberOfPages >= 200) {
 		this.title = this.title + ' (long book)';
 	}
+};
+//static methods
+bookSchema.statics.findShortEnglishBooks = function () {
+	return this.where('language')
+		.equals('english')
+		.where('numberOfPages')
+		.lte(200);
 };
 
 export const Book = mongoose.model('book', bookSchema);

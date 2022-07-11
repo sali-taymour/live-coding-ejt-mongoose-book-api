@@ -132,6 +132,14 @@ app.delete('/book/:id', async (req, res) => {
 		book,
 	});
 });
+// static methods
+app.get('/short-english-books', async (req, res) => {
+	const books = await Book.findShortEnglishBooks();
+	res.status(200).json({
+		message: `fetched all short books in English`,
+		books,
+	});
+});
 
 app.listen(port, () => {
 	console.log(`listening on port: http://localhost:${port}`);
