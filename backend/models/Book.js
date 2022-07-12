@@ -106,6 +106,33 @@ bookSchema.statics.findShortBooksByLanguage = function (language) {
 		.where('numberOfPages')
 		.lte(200);
 };
+//
+bookSchema.query.byLanguage = function (language) {
+	return this.where('language').equals(language);
+}; 
+// Mongoose Virtuals
+// create a new field that exists to be sent to the front end, but will not be saved in the database
+// e.g. a field that shows all the info of a book on one line
+
+
+
+bookSchema.virtual('bookInfoText').get(function () {
+	return `${this.title}, ${this.numberOfPages} pages: ${this.description}`;
+});
+
+bookSchema.set('toJSON', { virtuals: true });
+
+bookSchema.pre('save', function (next) {
+	this.whenUpdated = Date.now();
+	next();
+});
+//post hook 
+bookSchema.post('save', function (doc, next) {
+	const dt = new Date();
+	const timestamp = dt.toISOString();
+	console.log(`${timestamp}: updated book "${doc.title}`);
+	next();
+});
 
 export const Book = mongoose.model('book', bookSchema);
  

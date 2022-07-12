@@ -98,10 +98,14 @@ app.get('/book/:id', async (req, res) => {
 app.put('/book/:id', async (req, res) => {
 	const id = req.params.id;
 	const oldBook = await Book.findOne({ _id: id });
-	await Book.updateOne({ _id: id }, { $set: { ...req.body } });
-	const newBook = await Book.find({ _id: id });
+	const book = await Book.findOne({ _id: id });
+	Object.entries(req.body).forEach((kv) => {
+		book[kv[0]] = kv[1];
+	});
+	book.save();
+	const newBook = await Book.findOne({ _id: id });
 	res.status(200).json({
-		message: 'replaced book with id=' + id,
+		message: 'patched book with id=' + id,
 		oldBook,
 		newBook,
 	});
@@ -148,6 +152,22 @@ app.get('/short-books-by-language/:language', async (req, res) => {
 		books,
 	});
 });
+//
+app.get('/long-books-by-language/:language', async (req, res) => {
+	const language = req.params.language;
+	const books = await Book.where()
+		.byLanguage(language)
+		.where('numberOfPages')
+		.gte(200);
+	res.status(200).json({
+		message: `fetched all long books in ${language}`,
+		books,
+	});
+});
+
+
+
+
 
 app.listen(port, () => {
 	console.log(`listening on port: http://localhost:${port}`);
